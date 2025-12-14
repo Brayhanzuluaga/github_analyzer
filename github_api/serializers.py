@@ -65,3 +65,4 @@ class ErrorResponseSerializer(serializers.Serializer):
     detail = serializers.CharField(allow_null=True, required=False)
     status_code = serializers.IntegerField()
 
+

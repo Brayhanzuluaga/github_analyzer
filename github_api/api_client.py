@@ -113,3 +113,4 @@ class GitHubAPIClient:
         logger.info(f"Fetched {len(pull_requests)} pull requests")
         return pull_requests
 
+
