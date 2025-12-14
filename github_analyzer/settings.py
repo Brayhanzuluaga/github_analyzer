@@ -1,3 +1,7 @@
+"""
+Django settings for GitHub Analyzer project.
+"""
+
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -23,9 +27,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
     'rest_framework',
     'corsheaders',
     'drf_spectacular',
+    
     'github_api.apps.GithubApiConfig',
 ]
 
@@ -40,7 +46,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'config.urls'
+ROOT_URLCONF = 'github_analyzer.urls'
 
 TEMPLATES = [
     {
@@ -58,7 +64,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'config.wsgi.application'
+WSGI_APPLICATION = 'github_analyzer.wsgi.application'
 
 DATABASES = {
     'default': {
@@ -173,3 +179,4 @@ LOGGING = {
         },
     },
 }
+
