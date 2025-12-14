@@ -1,3 +1,7 @@
+"""
+Main URL Configuration for GitHub Analyzer project.
+"""
+
 from django.contrib import admin
 from django.urls import path, include
 from drf_spectacular.views import (
@@ -15,3 +19,4 @@ urlpatterns = [
     
     path('api/v1/', include('github_api.urls')),
 ]
+
