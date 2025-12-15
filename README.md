@@ -30,8 +30,9 @@ github_analyzer/
 ├── github_api/             # Main Django app
 │   ├── views.py           # API views/endpoints
 │   ├── serializers.py     # DRF serializers for validation
-│   ├── services.py        # Business logic layer
-│   ├── api_client.py      # GitHub API communication
+│   ├── services/          # Business logic layer
+│   │   ├── github_service.py      # Service layer for GitHub operations
+│   │   └── github_api_client.py   # GitHub API communication
 │   ├── models.py          # Database models (empty - stateless API)
 │   ├── tests.py           # Test cases
 │   └── urls.py            # URL routing
@@ -49,8 +50,6 @@ github_analyzer/
 ```bash
 docker-compose up --build
 ```
-
-The API will be available at: http://localhost:8000/
 
 ### Option 2: Manual Setup
 
@@ -84,10 +83,11 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-## API Documentation
+## API Access
 
-Interactive API documentation is available at:
+After starting the server (using either Docker or Manual Setup), the API will be available at:
 
+- **API Base URL**: http://localhost:8000/
 - **Swagger UI**: http://localhost:8000/api/docs/
 - **ReDoc**: http://localhost:8000/api/redoc/
 
@@ -114,6 +114,33 @@ curl -X GET "http://localhost:8000/api/v1/github/user-info/" \
 2. Click "Generate new token (classic)"
 3. Select scopes: `repo`, `read:org`, `read:user`
 4. Generate and copy your token
+
+### Authentication in Swagger UI / ReDoc
+
+To use the interactive documentation (Swagger UI or ReDoc) with authentication:
+
+#### In Swagger UI (http://localhost:8000/api/docs/):
+
+1. Open the documentation in your browser
+2. Look for the **"Authorize"** button (🔒) in the top right corner of the page
+3. Click on the **"Authorize"** button
+4. In the **"Value"** field, enter your GitHub token (only the token, without the word "Bearer")
+5. Click **"Authorize"** and then **"Close"**
+6. Now all requests you make from Swagger UI will automatically include the token in the `Authorization: Bearer <your_token>` header
+7. The token will be saved during the session thanks to the `persistAuthorization` configuration
+
+**Note**: Do not include the word "Bearer" when entering the token in Swagger UI, only the token itself. The system will automatically add the "Bearer" prefix.
+
+#### In ReDoc (http://localhost:8000/api/redoc/):
+
+ReDoc displays the API documentation but does not have an interactive authorization button. To use ReDoc, you need to make requests manually using tools like `curl` or Postman with the authorization header.
+
+#### Example with curl:
+
+```bash
+curl -X GET "http://localhost:8000/api/v1/github/user-info/" \
+     -H "Authorization: Bearer YOUR_GITHUB_TOKEN"
+```
 
 ## Testing
 
