@@ -14,7 +14,7 @@ from drf_spectacular.plumbing import build_bearer_security_scheme_object
 from asgiref.sync import async_to_sync
 import httpx
 
-from services.github_service import GitHubService
+from github_api.services.github_service import GitHubService
 from github_api.serializers import UserInfoResponseSerializer, ErrorResponseSerializer
 
 logger = logging.getLogger(__name__)
