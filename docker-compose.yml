@@ -1,0 +1,18 @@
+services:
+  web:
+    build: .
+    container_name: github_analyzer_api
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - DEBUG=True
+      - DJANGO_SECRET_KEY=dev-secret-key-change-in-production
+      - ALLOWED_HOSTS=localhost,127.0.0.1
+      - GITHUB_TEST_TOKEN=${GITHUB_TEST_TOKEN}
+    env_file:
+      - .env
+    stdin_open: true
+    tty: true
+
