@@ -16,3 +16,6 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'github_analyzer.settings')
 application = get_asgi_application()
 
 
+
+
+
