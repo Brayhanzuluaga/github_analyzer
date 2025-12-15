@@ -10,7 +10,7 @@ from drf_spectacular.utils import extend_schema, OpenApiResponse
 from asgiref.sync import async_to_sync
 import httpx
 
-from github_api.services import GitHubService
+from services.github_service import GitHubService
 from github_api.serializers import UserInfoResponseSerializer, ErrorResponseSerializer
 
 logger = logging.getLogger(__name__)
