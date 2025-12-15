@@ -160,11 +160,6 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',
         },
-        'file': {
-            'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'logs' / 'github_analyzer.log',
-            'formatter': 'verbose',
-        },
     },
     'root': {
         'handlers': ['console'],
