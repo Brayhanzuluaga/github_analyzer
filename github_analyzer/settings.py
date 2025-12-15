@@ -121,7 +121,7 @@ CORS_ALLOWED_ORIGINS = os.getenv(
     'http://localhost:3000,http://localhost:8000'
 ).split(',')
 
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = False
 
 
 SPECTACULAR_SETTINGS = {
@@ -136,6 +136,10 @@ SPECTACULAR_SETTINGS = {
 GITHUB_API_BASE_URL = os.getenv('GITHUB_API_BASE_URL', 'https://api.github.com')
 GITHUB_API_VERSION = os.getenv('GITHUB_API_VERSION', '2022-11-28')
 GITHUB_API_TIMEOUT = int(os.getenv('GITHUB_API_TIMEOUT', '30'))
+GITHUB_API_TIMEOUT_USER = int(os.getenv('GITHUB_API_TIMEOUT_USER', '30'))
+GITHUB_API_TIMEOUT_REPOS = int(os.getenv('GITHUB_API_TIMEOUT_REPOS', '120'))
+GITHUB_API_TIMEOUT_ORGS = int(os.getenv('GITHUB_API_TIMEOUT_ORGS', '30'))
+GITHUB_API_TIMEOUT_PRS = int(os.getenv('GITHUB_API_TIMEOUT_PRS', '30'))
 
 
 LOGGING = {
@@ -179,4 +183,5 @@ LOGGING = {
         },
     },
 }
+
 
