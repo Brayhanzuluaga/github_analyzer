@@ -5,7 +5,7 @@ Business logic services for GitHub API
 import asyncio
 import logging
 from typing import Dict, Any
-from github_api.api_client import GitHubAPIClient
+from services.github_api_client import GitHubAPIClient
 
 logger = logging.getLogger(__name__)
 

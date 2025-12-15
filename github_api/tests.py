@@ -35,7 +35,7 @@ class GitHubUserInfoViewTests(APITestCase):
         
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
     
-    @patch('github_api.services.GitHubService.get_user_complete_info', new_callable=AsyncMock)
+    @patch('services.github_service.GitHubService.get_user_complete_info', new_callable=AsyncMock)
     def test_successful_request_returns_200(self, mock_get_user_info):
         """Test that valid request returns 200 with data"""
         # Mock the service method to return expected data (async method)
@@ -85,7 +85,7 @@ class GitHubServiceTests(TestCase):
     
     def test_transform_repositories(self):
         """Test repository data transformation"""
-        from github_api.services import GitHubService
+        from services.github_service import GitHubService
         
         service = GitHubService()
         raw_data = [
@@ -193,7 +193,7 @@ class CircuitBreakerTests(TestCase):
     
     def setUp(self):
         """Set up test client"""
-        from github_api.api_client import GitHubAPIClient
+        from services.github_api_client import GitHubAPIClient
         self.client = GitHubAPIClient()
     
     @async_to_sync
@@ -314,7 +314,7 @@ class ConcurrencyTests(TestCase):
     
     def setUp(self):
         """Set up test service"""
-        from github_api.services import GitHubService
+        from services.github_service import GitHubService
         self.service = GitHubService()
     
     @async_to_sync
