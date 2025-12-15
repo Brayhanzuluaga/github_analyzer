@@ -529,5 +529,3 @@ class GitHubAPIClient:
         except (httpx.HTTPStatusError, httpx.TimeoutException) as e:
             await self._record_failure()
             raise
-
-

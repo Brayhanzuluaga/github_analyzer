@@ -6,7 +6,11 @@ import logging
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from drf_spectacular.utils import extend_schema, OpenApiResponse
+from rest_framework.authentication import BaseAuthentication
+from rest_framework.exceptions import AuthenticationFailed
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiResponse
+from drf_spectacular.extensions import OpenApiAuthenticationExtension
+from drf_spectacular.plumbing import build_bearer_security_scheme_object
 from asgiref.sync import async_to_sync
 import httpx
 
@@ -16,22 +20,43 @@ from github_api.serializers import UserInfoResponseSerializer, ErrorResponseSeri
 logger = logging.getLogger(__name__)
 
 
-class GitHubUserInfoView(APIView):
+class BearerTokenAuthentication(BaseAuthentication):
     """
-    API endpoint to retrieve authenticated GitHub user information.
-    
-    This view fetches:
-    - User basic information
-    - Public and private repositories
-    - Organizations
-    - Pull requests
+    Custom authentication class for Bearer token.
+    This allows drf-spectacular to automatically detect and show Bearer auth in Swagger.
     """
+    def authenticate(self, request):
+        auth_header = request.headers.get("Authorization", "")
+        if not auth_header:
+            return None
+        
+        parts = auth_header.split()
+        if len(parts) != 2:
+            return None
+        
+        auth_type, token = parts
+        if auth_type.lower() in ["bearer", "token"]:
+            return (None, token)
+        return None
+
+
+class BearerTokenScheme(OpenApiAuthenticationExtension):
+    """
+    OpenAPI extension for Bearer token authentication.
+    This tells drf-spectacular how to represent Bearer auth in the OpenAPI schema.
+    """
+    target_class = BearerTokenAuthentication
+    name = 'Bearer'
     
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.github_service = GitHubService()
-    
-    @extend_schema(
+    def get_security_definition(self, auto_schema):
+        return build_bearer_security_scheme_object(
+            header_name='Authorization',
+            token_prefix='Bearer'
+        )
+
+
+@extend_schema_view(
+    get=extend_schema(
         summary="Get GitHub User Information",
         description=(
             "Retrieve complete information for an authenticated GitHub user, "
@@ -60,6 +85,24 @@ class GitHubUserInfoView(APIView):
         },
         tags=["GitHub API"],
     )
+)
+class GitHubUserInfoView(APIView):
+    """
+    API endpoint to retrieve authenticated GitHub user information.
+    
+    This view fetches:
+    - User basic information
+    - Public and private repositories
+    - Organizations
+    - Pull requests
+    """
+    
+    authentication_classes = [BearerTokenAuthentication]
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.github_service = GitHubService()
+    
     def get(self, request):
         """
         Handle GET request to retrieve GitHub user information.
@@ -72,9 +115,8 @@ class GitHubUserInfoView(APIView):
             Response with user information or error
         """
         try:
-            token = self._extract_token(request)
-            
-            if not token:
+            auth_result = BearerTokenAuthentication().authenticate(request)
+            if not auth_result:
                 logger.warning("Request received without authentication token")
                 return Response(
                     {
@@ -84,6 +126,8 @@ class GitHubUserInfoView(APIView):
                     },
                     status=status.HTTP_401_UNAUTHORIZED
                 )
+            
+            _, token = auth_result
             
             logger.info(f"Fetching GitHub user info with token: ...{token[-4:]}")
             user_info = async_to_sync(self.github_service.get_user_complete_info)(token)
@@ -142,30 +186,5 @@ class GitHubUserInfoView(APIView):
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-    
-    def _extract_token(self, request) -> str:
-        """
-        Extract GitHub token from Authorization header.
-        
-        Args:
-            request: Django request object
-            
-        Returns:
-            GitHub token string or empty string if not found
-        """
-        auth_header = request.headers.get("Authorization", "")
-        
-        if not auth_header:
-            return ""
-        
-        parts = auth_header.split()
-        if len(parts) != 2:
-            return ""
-        
-        auth_type, token = parts
-        if auth_type.lower() in ["bearer", "token"]:
-            return token
-        
-        return ""
 
 

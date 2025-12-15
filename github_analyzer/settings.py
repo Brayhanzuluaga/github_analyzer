@@ -130,6 +130,21 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     'COMPONENT_SPLIT_REQUEST': True,
+    'COMPONENTS': {
+        'securitySchemes': {
+            'Bearer': {
+                'type': 'http',
+                'scheme': 'bearer',
+                'bearerFormat': 'Token',
+                'description': 'GitHub Personal Access Token. Format: Bearer <token>',
+            }
+        }
+    },
+    'SECURITY': [{'Bearer': []}],
+    'SWAGGER_UI_SETTINGS': {
+        'persistAuthorization': True,
+        'displayRequestDuration': True,
+    },
 }
 
 
@@ -178,5 +193,4 @@ LOGGING = {
         },
     },
 }
-
 
