@@ -49,13 +49,48 @@ class UserSerializer(serializers.Serializer):
     following = serializers.IntegerField()
 
 
+class RepositoriesMetadataSerializer(serializers.Serializer):
+    """Serializer for repositories metadata"""
+    
+    total_fetched = serializers.IntegerField()
+    has_more = serializers.BooleanField()
+    limit_reached = serializers.BooleanField()
+    pages_fetched = serializers.IntegerField()
+    error = serializers.CharField(allow_null=True, required=False)
+
+
+class PartialFailuresSerializer(serializers.Serializer):
+    """Serializer for partial failures metadata"""
+    
+    repositories = serializers.BooleanField()
+    organizations = serializers.BooleanField()
+    pull_requests = serializers.BooleanField()
+
+
+class ErrorsMetadataSerializer(serializers.Serializer):
+    """Serializer for errors in metadata"""
+    
+    repositories = serializers.CharField(allow_null=True, required=False)
+    organizations = serializers.CharField(allow_null=True, required=False)
+    pull_requests = serializers.CharField(allow_null=True, required=False)
+
+
+class ResponseMetadataSerializer(serializers.Serializer):
+    """Serializer for response metadata"""
+    
+    partial_failures = PartialFailuresSerializer()
+    errors = ErrorsMetadataSerializer(allow_null=True, required=False)
+
+
 class UserInfoResponseSerializer(serializers.Serializer):
     """Complete serializer for GitHub user information response"""
     
     user = UserSerializer()
     repositories = RepositorySerializer(many=True)
+    repositories_metadata = RepositoriesMetadataSerializer()
     organizations = OrganizationSerializer(many=True)
     pull_requests = PullRequestSerializer(many=True)
+    metadata = ResponseMetadataSerializer()
 
 
 class ErrorResponseSerializer(serializers.Serializer):

@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import extend_schema, OpenApiResponse
+from asgiref.sync import async_to_sync
 import httpx
 
 from github_api.services import GitHubService
@@ -34,7 +35,10 @@ class GitHubUserInfoView(APIView):
         summary="Get GitHub User Information",
         description=(
             "Retrieve complete information for an authenticated GitHub user, "
-            "including repositories (public and private), organizations, and pull requests."
+            "including repositories (public and private), organizations, and pull requests. "
+            "Uses parallel requests for optimized performance. "
+            "Includes rate limiting, circuit breaker protection, and graceful partial failure handling. "
+            "Response includes metadata about pagination limits and any partial failures."
         ),
         responses={
             200: OpenApiResponse(
@@ -59,6 +63,7 @@ class GitHubUserInfoView(APIView):
     def get(self, request):
         """
         Handle GET request to retrieve GitHub user information.
+        Uses async/await for parallel API calls to GitHub.
         
         Expected header:
             Authorization: Bearer <github_token>
@@ -81,7 +86,7 @@ class GitHubUserInfoView(APIView):
                 )
             
             logger.info(f"Fetching GitHub user info with token: ...{token[-4:]}")
-            user_info = self.github_service.get_user_complete_info(token)
+            user_info = async_to_sync(self.github_service.get_user_complete_info)(token)
             
             return Response(user_info, status=status.HTTP_200_OK)
         
