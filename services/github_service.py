@@ -177,5 +177,3 @@ class GitHubService:
                 "repository": repo_name,
             })
         return pull_requests
-
-

@@ -8,4 +8,4 @@ class GithubApiConfig(AppConfig):
     verbose_name = 'GitHub API'
     
     def ready(self):
-        pass
+        import github_api.views  # noqa
